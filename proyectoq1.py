@@ -2,11 +2,9 @@
 
 
 def recibir_datos(datos_crudos: list) -> list:
-    #TODO: Crear una lista vacía que se denomiina datos aprobados
     datos_aprobados = []
-    #TODO: hacer un bucle para revisar cada diccionario
     for i in datos_crudos:
-        if "ids" in i and "monto" in i and "hora" in i:       
+        if "id_usuario" in i and "monto" in i and "hora" in i:       
             monto_texto = str(i["monto"])
 
             if "$" in monto_texto:
@@ -34,9 +32,16 @@ def recibir_datos(datos_crudos: list) -> list:
 
 
 def agrupador_ids(datos_limpios:list) -> dict:
-    #TODO: Asignar numero de transacciones por tiempo a su id
+    dicc_limpio = {}   
+    for i in datos_limpios:
+        id_actual = i["id_usuario"]
+        if id_actual in dicc_limpio:
+            dicc_limpio[id_actual].append(i)
+        else:
+            dicc_limpio[id_actual] = [i]
+            
+    return dicc_limpio  
     
-    pass
 
 def identificador_anomalias(datos_ordenados:dict) -> dict:
     #TODO: Logica booleana para separar clientes normales de clientes sospechosos
@@ -46,18 +51,21 @@ def identificador_anomalias(datos_ordenados:dict) -> dict:
 
     pass
 
-if __name__ == "__main__":
+
     # --- PIPELINE PRINCIPAL ---
-    if __name__ == "__main__":
+if __name__ == "__main__":
     # Datos de prueba con basura (monto con $, hora mal, llaves faltantes)
-        transacciones_sucias = [
-            {"ids": "User1", "monto": "$100.50", "hora": "10:30"},
-            {"ids": "User2", "monto": "50.00", "hora": "1115"}, # Mal: sin ":"
-            {"monto": "20.0"}, # Mal: sin "ids" ni "hora"
-            {"ids": "User3", "monto": "Gratis", "hora": "12:00"} # Mal: no es número
-        ]
+    transacciones_sucias = [
+        {"id_usuario": "User1", "monto": "$100.50", "hora": "10:30"},
+        {"id_usuario": "User2", "monto": "50.00", "hora": "1115"}, # Mal: sin ":"
+        {"monto": "20.0"}, # Mal: sin "ids" ni "hora"
+        {"id_usuario": "User3", "monto": "Gratis", "hora": "12:00"} # Mal: no es número
+    ]
     
-        resultado = recibir_datos(transacciones_sucias)
-        print(f"Transacciones aprobadas: {len(resultado)}")
-        print(resultado)
+    resultado = recibir_datos(transacciones_sucias)
+    print(f"Transacciones aprobadas: {len(resultado)}")
+    print(resultado)
+    agrupados = agrupador_ids(resultado)
+    print(f"Agrupados: {agrupados}")
+    
               
